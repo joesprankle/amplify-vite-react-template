@@ -19,7 +19,8 @@ function App() {
     async function getUserAttributes() {
       try {
         const attributes = await fetchUserAttributes();
-        setUserAttributes(attributes);
+        const authString = attributes['custom:auth_string'];
+        setUserAttributes({ 'custom:auth_string': authString });
       } catch (error) {
         console.error('Error fetching user attributes:', error);
       }
@@ -44,14 +45,8 @@ function App() {
             ))}
           </ul>
           <div>
-            <h2>User Attributes:</h2>
-            <ul>
-              {Object.entries(userAttributes).map(([key, value]) => (
-                <li key={key}>
-                  {key}: {value}
-                </li>
-              ))}
-            </ul>
+            <h2>User Attribute:</h2>
+            <p>{userAttributes['custom:auth_string']}</p>
           </div>
           <div>
             🥳 App successfully hosted. Try creating a new todo.
@@ -68,4 +63,3 @@ function App() {
 }
 
 export default App;
-
