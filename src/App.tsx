@@ -9,7 +9,7 @@ const client = generateClient<Schema>();
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const [userAttributes, setUserAttributes] = useState({});
+  const [userAttributes, setUserAttributes] = useState({ fullname: '', configurations: [] });
 
   useEffect(() => {
     client.models.Todo.observeQuery().subscribe({
@@ -20,7 +20,8 @@ function App() {
       try {
         const attributes = await fetchUserAttributes();
         const authString = attributes['custom:auth_string'];
-        setUserAttributes({ 'custom:auth_string': authString });
+        const parsedAttributes = JSON.parse(authString);
+        setUserAttributes(parsedAttributes);
       } catch (error) {
         console.error('Error fetching user attributes:', error);
       }
@@ -46,7 +47,16 @@ function App() {
           </ul>
           <div>
             <h2>User Attribute:</h2>
-            <p>{userAttributes['custom:auth_string']}</p>
+            <p>Here are your dashboards, {userAttributes.fullname}</p>
+            <ul>
+              {userAttributes.configurations
+                .sort((a, b) => a.order - b.order)
+                .map((config, index) => (
+                  <li key={index}>
+                    Dashboard: {config.linkname} URL: <a href={config.url}>{config.url}</a>
+                  </li>
+                ))}
+            </ul>
           </div>
           <div>
             🥳 App successfully hosted. Try creating a new todo.
